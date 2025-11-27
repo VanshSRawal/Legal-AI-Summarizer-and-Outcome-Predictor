@@ -1,0 +1,18 @@
+streamlit
+langchain
+langchain-groq
+chromadb
+sentence-transformers
+pypdf
+pymupdf
+python-dotenv
+langchain-huggingface
+selenium webdriver-manager
+beautifulsoup4
+pandas
+tqdm
+requests
+scikit-learn
+torch
+transformers
+shap
