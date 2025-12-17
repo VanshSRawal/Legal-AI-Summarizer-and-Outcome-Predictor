@@ -1,4 +1,5 @@
 # ⚖️ Legal AI: FIRAC Summarizer & Case Outcome Predictor (IT Act, 2000)
+<img width="615" height="451" alt="image" src="https://github.com/user-attachments/assets/123e0209-813f-4319-9cc9-86d83b6fea19" />
 
 ## 📌 Overview
 This project is a **domain-specific Legal AI system** focused on Indian cyber law cases governed by the **Information Technology Act, 2000**.  
