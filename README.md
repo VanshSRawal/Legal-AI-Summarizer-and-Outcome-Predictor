@@ -14,6 +14,8 @@ The system is intended for **academic and research use** and does **not replace 
 ---
 
 ## 🧩 System Architecture
+ <img width="865" height="342" alt="image" src="https://github.com/user-attachments/assets/e727fd7b-38fb-4ba1-8053-04b17cdfcac6" />
+
 The project consists of **two tightly integrated phases**:
 
 1. **Phase 1 – FIRAC Summarizer (RAG-based)**
