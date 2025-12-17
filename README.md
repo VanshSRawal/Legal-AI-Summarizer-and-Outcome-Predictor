@@ -1,91 +1,141 @@
 # ⚖️ Legal AI: FIRAC Summarizer & Case Outcome Predictor (IT Act, 2000)
 
-## Overview
-This project implements a domain-specific Legal AI system for analyzing Indian cyber law cases governed by the Information Technology Act, 2000.
-Unlike general-purpose LLM tools, this system is statute-grounded, explainable, and auditable, making it suitable for academic and legal research use.
+## 📌 Overview
+This project is a **domain-specific Legal AI system** focused on Indian cyber law cases governed by the **Information Technology Act, 2000**.  
+It combines **Retrieval-Augmented Generation (RAG)** and **Explainable Machine Learning** to assist legal research by:
 
-The project is built in two integrated phases:
+- Generating structured **FIRAC summaries** of judgments
+- Predicting **case outcomes (Petitioner vs Respondent)**
+- Explaining predictions in **plain English**
+- Mapping relevant **IT Act penalties**
 
-Phase 1 – FIRAC Summarizer (Retrieval-Augmented Generation)
-
-Phase 2 – Case Outcome Predictor (Explainable Machine Learning)
-
-The system assists users in understanding judgments, predicting outcomes, and mapping legal consequences, while explicitly avoiding claims of legal advice or decision-making.
-
----
-
-## Phase 1: FIRAC Summarizer (RAG Pipeline)
-
-**What it does**
-- Generates FIRAC-style summaries (Facts, Issues, Rules, Analysis, Conclusion)
-- Grounds outputs in the IT Act, 2000 and uploaded judgments
-
-**How it works**
-- PDF parsing and text extraction
-- Semantic chunking
-- Vector similarity search
-- Context-aware summary generation
-
-**Why RAG**
-- Reduces hallucination
-- Ensures statute-grounded summaries
-- Improves explainability
+The system is intended for **academic and research use** and does **not replace judicial reasoning**.
 
 ---
 
-## Phase 2: Case Outcome Predictor
+## 🧩 System Architecture
+The project consists of **two tightly integrated phases**:
 
-**What it does**
-- Predicts Petitioner vs Respondent outcome
-- Outputs probability, threshold, explanation, and penalties
+1. **Phase 1 – FIRAC Summarizer (RAG-based)**
+2. **Phase 2 – Case Outcome Predictor (Explainable ML)**
 
-**Model**
-- TF-IDF (uni + bi-grams)
-- IT Act section one-hot encoding
-- Calibrated Logistic Regression (Platt scaling)
-
-**Why Logistic Regression**
-- Interpretable
-- Stable on legal datasets
-- Supports explainable AI
+Both phases are exposed through a **single Streamlit application**.
 
 ---
 
-## Evaluation
+## 📑 Phase 1: FIRAC Summarizer (RAG Pipeline)
 
-**Quantitative**
+### What It Does
+- Produces **FIRAC-style summaries**:
+  - Facts
+  - Issues
+  - Rules
+  - Analysis
+  - Conclusion
+- Grounds summaries in:
+  - **IT Act, 2000 (PDF knowledge base)**
+  - **Uploaded Indian court judgments**
+
+### How It Works
+1. PDF text extraction
+2. **Semantic chunking** of legal text
+3. Vector embedding of chunks
+4. Similarity-based retrieval
+5. Context-aware response generation using LLMs
+
+### Why RAG Is Used
+- Prevents hallucination common in generic LLMs
+- Ensures outputs remain **statute-grounded**
+- Enables traceable and auditable summaries
+- Improves factual consistency in legal text generation
+
+---
+
+## 🧠 Phase 2: Case Outcome Predictor
+
+### What It Does
+- Predicts the **likely winner** of a case:
+  - **PETITIONER**
+  - **RESPONDENT**
+- Provides:
+  - Probability score
+  - Optimized decision threshold
+  - Plain-English explanation
+  - Relevant IT Act penalties
+
+---
+
+## ⚙️ Model & Feature Engineering
+
+### Feature Construction
+- **Text Features**
+  - TF-IDF vectorization
+  - Unigrams and bigrams
+  - Legal-specific token filtering
+- **Statutory Features**
+  - One-hot encoding of IT Act sections (e.g., Section 66, 43A)
+
+### Model Used
+- **Calibrated Logistic Regression**
+  - Stratified 5-fold cross-validation
+  - Class-weight balancing
+  - Probability calibration using **Platt Scaling (Sigmoid)**
+
+### Why Logistic Regression
+- High interpretability (linear coefficients)
+- Stable on limited legal datasets
+- Coefficients directly support explainability
+- Faster and more reliable than black-box models in legal domains
+
+---
+
+## 📊 Evaluation & Results
+
+### Quantitative Metrics
 - Accuracy
-- Macro F1-score
+- Macro F1-score (primary optimization metric)
 - ROC-AUC
+- Confusion Matrix
 
-**Qualitative**
-- Manual comparison with real judgments
-- Validation of sections, outcomes, and explanations
-
----
-
-## Explainability
-- Feature contribution analysis
-- Key words and sections
-- Plain-English explanation for non-technical users
+### Qualitative Evaluation
+- Manual comparison against real judgments
+- Validation of:
+  - Detected IT Act sections
+  - Predicted outcome alignment
+  - Explanation plausibility and legal coherence
 
 ---
 
-## Penalty Mapping
-- Section-aware IT Act penalty retrieval
+## 🔎 Explainable AI (XAI)
+
+- Feature-level contribution analysis
+- Identifies:
+  - Influential words/phrases
+  - Statutory sections affecting predictions
+- Converts model reasoning into **plain-English explanations**
+- Designed for **non-technical legal users**
+
+---
+
+## 🏛️ IT Act Penalty Mapping
+- Automatically retrieves penalties for detected IT Act sections
+- Section-aware and configurable
 - Educational and research use only
 
 ---
 
-## User Interface
-- Streamlit-based web application
-- Unified summarizer + predictor interface
-- PDF upload and result visualization
+## 🖥️ User Interface
+- Built using **Streamlit**
+- Unified application with:
+  - FIRAC Summarizer tab
+  - Case Outcome Predictor tab
+- Supports PDF uploads
+- Displays predictions, explanations, and penalties in a single view
 
 ---
 
-## Project Structure
-```
+## 🗂️ Project Structure
+```text
 app_integrated.py
 ik_it_act_scraper.py
 clean_preprocess_it_cases.py
@@ -98,31 +148,3 @@ it_act_config.py
 models/
 scraped_it_cases/
 README.md
-```
-
----
-
-## Workflow Diagram
-<img width="865" height="342" alt="image" src="https://github.com/user-attachments/assets/4d01a6de-eb98-435b-a711-19a9a3a78434" />
-
-
----
-
-## Future Work
-- Non-IT Act detection guardrails
-- SHAP-based explanations
-- External legal expert validation
-- API-based deployment
-
----
-
-## Disclaimer
-This project is for academic and research purposes only.
-It does not provide legal advice.
-
----
-
-## References
-- Information Technology Act, 2000
-- Indian Kanoon
-- Scikit-learn Documentation
