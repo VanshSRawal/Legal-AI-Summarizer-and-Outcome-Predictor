@@ -94,6 +94,8 @@ Both phases are exposed through a **single Streamlit application**.
 ---
 
 ## 📊 Evaluation & Results
+<img width="442" height="339" alt="image" src="https://github.com/user-attachments/assets/41434271-2dd7-4e96-b16c-e4146756eb5a" />
+
 
 ### Quantitative Metrics
 - Accuracy
