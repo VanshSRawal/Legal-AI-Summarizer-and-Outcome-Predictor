@@ -100,8 +100,8 @@ README.md
 ---
 
 ## Workflow Diagram
-(<img width="865" height="342" alt="image" src="https://github.com/user-attachments/assets/4d01a6de-eb98-435b-a711-19a9a3a78434" />
-)
+<img width="865" height="342" alt="image" src="https://github.com/user-attachments/assets/4d01a6de-eb98-435b-a711-19a9a3a78434" />
+
 
 ---
 
