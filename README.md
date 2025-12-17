@@ -1,13 +1,16 @@
 # ⚖️ Legal AI: FIRAC Summarizer & Case Outcome Predictor (IT Act, 2000)
 
 ## Overview
-This project is a domain-specific Legal AI system focused on Indian cyber law cases under the Information Technology Act, 2000.
-It consists of two tightly integrated phases:
+This project implements a domain-specific Legal AI system for analyzing Indian cyber law cases governed by the Information Technology Act, 2000.
+Unlike general-purpose LLM tools, this system is statute-grounded, explainable, and auditable, making it suitable for academic and legal research use.
 
-1. Phase 1 – FIRAC Summarizer (RAG-based)
-2. Phase 2 – Case Outcome Predictor (Explainable ML)
+The project is built in two integrated phases:
 
-The system is designed to assist legal research, not replace judicial reasoning.
+Phase 1 – FIRAC Summarizer (Retrieval-Augmented Generation)
+
+Phase 2 – Case Outcome Predictor (Explainable Machine Learning)
+
+The system assists users in understanding judgments, predicting outcomes, and mapping legal consequences, while explicitly avoiding claims of legal advice or decision-making.
 
 ---
 
