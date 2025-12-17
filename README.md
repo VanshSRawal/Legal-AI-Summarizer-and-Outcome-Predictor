@@ -15,7 +15,8 @@ The system is intended for **academic and research use** and does **not replace 
 ---
 
 ## 🧩 System Architecture
- <img width="865" height="342" alt="image" src="https://github.com/user-attachments/assets/e727fd7b-38fb-4ba1-8053-04b17cdfcac6" />
+ <img width="1536" height="1024" alt="system_overview" src="https://github.com/user-attachments/assets/3d66d5b3-7707-4484-8d57-270498f7fd98" />
+
 
 The project consists of **two tightly integrated phases**:
 
