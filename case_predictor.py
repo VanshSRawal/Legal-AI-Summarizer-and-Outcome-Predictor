@@ -5,7 +5,7 @@ import pandas as pd
 from pathlib import Path
 
 try:
-    import PyPDF2
+    import pypdf as PyPDF2
 except Exception:
     PyPDF2 = None
 
