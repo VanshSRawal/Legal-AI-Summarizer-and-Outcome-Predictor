@@ -17,5 +17,6 @@ tqdm
 requests
 scikit-learn
 torch
+torchvision
 transformers
 shap
