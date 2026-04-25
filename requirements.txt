@@ -5,7 +5,7 @@ langchain-community
 langchain-groq
 chromadb
 sentence-transformers
-pypdf
+PyPDF2
 pymupdf
 python-dotenv
 langchain-huggingface
