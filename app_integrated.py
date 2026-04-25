@@ -1,7 +1,8 @@
-#app-integrated v2
+#app-integrated v3
 import os
 import re
 import joblib
+import tempfile
 import streamlit as st
 from dotenv import load_dotenv
 
@@ -12,8 +13,7 @@ from summarizer import summarize_pdf
 from case_predictor import predict_case, extract_text_from_pdf, make_inference_frame
 from penalties_retriever import retrieve_penalties_for_sections
 from narrative_explainer import make_plain_english_explanation
-from explainer import explain_single  
-
+from explainer import explain_single
 
 load_dotenv()
 st.set_page_config(page_title="Legal AI – FIRAC + Outcome Predictor", layout="wide")
@@ -28,44 +28,46 @@ tab_sum, tab_pred = st.tabs(["📑 FIRAC Summarizer", "🧠 Case Outcome Predict
 with tab_sum:
     st.subheader("Upload a case PDF to generate a FIRAC summary")
     up = st.file_uploader("Upload PDF", type=["pdf"], key="sum_pdf")
+
     if up:
-        temp = "tmp_sum.pdf"
-        with open(temp, "wb") as f:
-            f.write(up.getbuffer())
         if st.button("Generate FIRAC Summary", type="primary"):
             with st.spinner("Summarizing..."):
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+                    tmp.write(up.getbuffer())
+                    tmp_path = tmp.name
                 try:
-                    summary = summarize_pdf(temp)
+                    summary = summarize_pdf(tmp_path)
                     st.markdown("### 📄 FIRAC Summary")
                     st.write(summary)
                 finally:
-                    os.remove(temp)
+                    try:
+                        os.remove(tmp_path)
+                    except Exception:
+                        pass
 
 # -------------------------------------
 # Tab 2: Predictor (Phase 2)
 # -------------------------------------
-try:
+with tab_pred:
+    st.subheader("Predict outcome for a case and view relevant IT-Act penalties")
+    up2 = st.file_uploader("Upload PDF", type=["pdf"], key="pred_pdf")
 
-    with tab_pred:
-        st.subheader("Predict outcome for a case and view relevant IT-Act penalties")
-        up2 = st.file_uploader("Upload PDF", type=["pdf"], key="pred_pdf")
-        if up2:
-            temp2 = "tmp_pred.pdf"
-            with open(temp2, "wb") as f:
-                f.write(up2.getbuffer())
-
-            if st.button("Run Prediction", type="primary"):
-                with st.spinner("Analyzing case & running model..."):
+    if up2:
+        if st.button("Run Prediction", type="primary"):
+            with st.spinner("Analyzing case & running model..."):
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp2:
+                    tmp2.write(up2.getbuffer())
+                    tmp2_path = tmp2.name
+                try:
                     # 1) Predict
-                    pred = predict_case(temp2, model_dir="models")
+                    pred = predict_case(tmp2_path, model_dir="models")
                     p_pet = float(pred["proba_petitioner"])
                     thr = float(pred["decision_threshold"])
                     label = pred["predicted_winner_label"]
 
-                    # --- Robust parties extraction (keep your applicant/appellant requirement) ---
+                    # --- Robust parties extraction ---
                     pet_name = None
                     res_name = None
-                    # Prefer dict if present
                     if isinstance(pred.get("parties"), dict):
                         parties = pred["parties"]
                         pet_name = (
@@ -79,7 +81,6 @@ try:
                             or parties.get("defendant")
                             or parties.get("state")
                         )
-                    # Fallback to names (from case_predictor)
                     if not pet_name or not res_name:
                         if label == "PETITIONER":
                             pet_name = pet_name or pred.get("winner_name")
@@ -98,14 +99,14 @@ try:
                     with c3:
                         st.write(f"**Decision threshold:** {thr:.2f}")
 
-                    # Parties card (best-effort extraction incl. Applicant/Appellant)
+                    # Parties card
                     st.markdown("#### 👥 Parties detected (best-effort from first page)")
                     st.write(
                         f"- **Petitioner / Applicant / Appellant / Complainant:** `{pet_name or 'unknown'}`\n"
                         f"- **Respondent / Defendant / State:** `{res_name or 'unknown'}`"
                     )
 
-                    # 3) Narrative reason (plain English)
+                    # 3) Narrative reason
                     pct = round(p_pet * 100, 1)
                     verdict_word = "above" if p_pet >= thr else "below"
                     st.info(
@@ -115,22 +116,22 @@ try:
                         f"Note: many orders title the Petitioner as **Applicant/Appellant**—we treat them equivalently."
                     )
 
-                    # 4 --- Local explanation as plain English (no token ids, no highlights) ---
+                    # 4) Local explanation
                     bundle = joblib.load("models/binary_outcome_model.joblib")
                     pipe   = bundle["pipeline"]
-                    text   = extract_text_from_pdf(temp2)
+                    text   = extract_text_from_pdf(tmp2_path)
                     X_row  = make_inference_frame(text, bundle.get("sec_cols", []))
                     exp    = explain_single(pipe, X_row, top_k=12)
 
                     st.markdown("### 🔎 Why this prediction?")
                     st.caption("We compute linear contribution weights from the calibrated Logistic Regression and convert them into a readable explanation.")
                     try:
-                        nar = make_plain_english_explanation(exp,proba=p_pet,threshold=thr,predicted_label=label)
+                        nar = make_plain_english_explanation(exp, proba=p_pet, threshold=thr, predicted_label=label)
                         st.write(nar["summary_md"])
                     except Exception as e:
                         st.warning(f"Could not build the plain-English explanation: {e}")
 
-                    # 5 --- Concise IT-Act penalties ---
+                    # 5) IT-Act penalties
                     secs = pred["detected_sections"]
                     st.markdown("### 🏛️ Relevant penalties (Information Technology Act, 2000)")
                     if secs:
@@ -140,9 +141,9 @@ try:
                         st.caption("Note: concise demo summaries for learning; verify against the statute before real-world use.")
                     else:
                         st.write("No IT-Act sections detected in the document for penalty lookup.")
-                    
-finally:
-    try:
-        os.remove(temp2)
-    except Exception:
-        pass
+
+                finally:
+                    try:
+                        os.remove(tmp2_path)
+                    except Exception:
+                        pass
