@@ -7,7 +7,8 @@ pypdf
 pymupdf
 python-dotenv
 langchain-huggingface
-selenium webdriver-manager
+selenium
+webdriver-manager
 beautifulsoup4
 pandas
 tqdm
